@@ -1,5 +1,3 @@
-# enclave/encryption/base.py
-
 from abc import ABC, abstractmethod
 
 class EncryptionAlgorithm(ABC):

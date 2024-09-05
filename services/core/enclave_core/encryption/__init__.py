@@ -1,13 +1,15 @@
-# enclave/encryption/__init__.py
+from enclave_core.encryption.aes import AESAlgorithm
+from enclave_core.encryption.base import EncryptionAlgorithm
 
-from .aes import AESAlgorithm
 
 ENCRYPTION_ALGORITHMS = {
     'AES': AESAlgorithm,
 }
 
-def get_encryption_algorithm(name: str, **kwargs):
-    algorithm_class = ENCRYPTION_ALGORITHMS.get(name)
-    if not algorithm_class:
-        raise ValueError(f"Unsupported encryption algorithm: {name}")
-    return algorithm_class(**kwargs)
+class EncryptionFactory:
+    @staticmethod
+    def get_encryption_algorithm(algorithm_type: str) -> EncryptionAlgorithm:
+        if algorithm_type == "AES":
+            return AESAlgorithm
+        else:
+            raise ValueError(f"Unsupported algorithm type: {algorithm_type}")

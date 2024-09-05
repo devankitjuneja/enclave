@@ -1,10 +1,9 @@
-# enclave/encryption/aes.py
-
-from .base import EncryptionAlgorithm
+import os
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
-import os
+from enclave_core.encryption.base import EncryptionAlgorithm
+
 
 class AESAlgorithm(EncryptionAlgorithm):
     def __init__(self, key: bytes, iv: bytes = None):
