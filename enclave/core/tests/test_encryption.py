@@ -1,7 +1,7 @@
 import os
 import pytest
-from enclave_core.encryption import EncryptionFactory
-from enclave_core.encryption.aes import AESAlgorithm
+from enclave.core.encryption import EncryptionFactory
+from enclave.core.encryption.aes import AESAlgorithm
 
 
 def test_aes_encrypt_decrypt():

@@ -1,9 +1,9 @@
-from enclave_core.encryption.aes import AESAlgorithm
-from enclave_core.encryption.base import EncryptionAlgorithm
+from enclave.core.encryption.aes import AESAlgorithm
+from enclave.core.encryption.base import EncryptionAlgorithm
 
 
 ENCRYPTION_ALGORITHMS = {
-    'AES': AESAlgorithm,
+    'AES-256-CBC': AESAlgorithm,
 }
 
 class EncryptionFactory:

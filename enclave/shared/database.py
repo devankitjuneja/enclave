@@ -3,18 +3,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 import functools
-from shared.models.base import Base
 
-# Database configuration
+
 DATABASE_URL = os.environ.get('SQLALCHEMY_URI')
 
-# Create the engine
 engine = create_engine(DATABASE_URL, )
 
-# Create all tables
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
-# Create a configured "Session" class
 Session = sessionmaker(bind=engine)
 
 @contextmanager
@@ -37,3 +33,24 @@ def with_db_session(func):
         with db_session() as session:
             return func(*args, db_session=session, **kwargs)
     return wrapper
+
+# def inject_db_session():
+#     def wrapper(fn):
+#         @wraps(fn)
+#         def wrapped(self, *args, **kwargs):
+#             db_session = None
+#             try:
+#                 engine = create_engine(os.getenv('SQLALCHEMY_URI'))
+#                 db_session = scoped_session(sessionmaker(
+#                     bind=engine,  autocommit=False))
+#                 return fn(self, db_session, *args, **kwargs)
+#             except Exception as exc:
+#                 if db_session:
+#                     logger.error('Rolling back db session')
+#                     db_session.rollback()
+#                 raise exc
+#             finally:
+#                 if db_session:
+#                     db_session.close()
+#         return wrapped
+#     return wrapper
