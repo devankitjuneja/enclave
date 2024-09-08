@@ -1,7 +1,7 @@
 from sqlalchemy import (
     Column, String, Integer,
     ForeignKey, Text, DateTime,
-    BLOB, text
+    text
 )
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship

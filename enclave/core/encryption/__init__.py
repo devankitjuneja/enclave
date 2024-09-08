@@ -9,7 +9,4 @@ ENCRYPTION_ALGORITHMS = {
 class EncryptionFactory:
     @staticmethod
     def get_encryption_algorithm(algorithm_type: str) -> EncryptionAlgorithm:
-        if algorithm_type == "AES":
-            return AESAlgorithm
-        else:
-            raise ValueError(f"Unsupported algorithm type: {algorithm_type}")
+        return ENCRYPTION_ALGORITHMS[algorithm_type]

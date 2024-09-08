@@ -6,8 +6,8 @@ from enclave.core.encryption.base import EncryptionAlgorithm
 
 
 class AESAlgorithm(EncryptionAlgorithm):
-    def __init__(self, key: bytes, iv: bytes = None):
-        self.key = key
+    def __init__(self, key: bytes = None, iv: bytes = None):
+        self.key = key or self.generate_key()
         self.iv = iv or os.urandom(16)
         self.backend = default_backend()
 
