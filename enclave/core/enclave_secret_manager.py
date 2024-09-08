@@ -11,6 +11,7 @@ class SecretResponse(BaseModel):
     name: str
     active_version: int
     secret_value: str
+    value: str
     algorithm: str
 
 class SecretGetResponse(BaseModel):
@@ -61,7 +62,8 @@ class EnclaveSecretManager:
             id=new_secret.id,
             name=new_secret.name,
             active_version=new_secret.active_version,
-            secret_value=value,
+            secret_value=encrypted_value,
+            value=value,
             algorithm=self.default_algorithm
         )
 
@@ -98,7 +100,8 @@ class EnclaveSecretManager:
             id=existing_secret.id,
             name=existing_secret.name,
             active_version=existing_secret.active_version,
-            secret_value=value,
+            secret_value=encrypted_value,
+            value=value,
             algorithm=self.default_algorithm
         )
 
