@@ -1,7 +1,9 @@
+import os
 import click
-from enclave.core.enclave_secret_manager import EnclaveSecretManager
+import requests
+import json
 
-secret_manager = EnclaveSecretManager()
+API_URL = os.getenv('API_URL')
 
 @click.group()
 def cli():
@@ -9,47 +11,73 @@ def cli():
     pass
 
 @click.command()
-@click.argument('name')
+@click.argument('key')
 @click.argument('value')
-def create(name, value):
-    """Create a new secret"""
-    try:
-        created_secret = secret_manager.create_secret(name, value)
-        click.echo(f"Secret '{name}' created with ID: {created_secret.id}")
-    except Exception as e:
-        click.echo(f"Error: {str(e)}")
+def create(key, value):
+    """Create a new secret."""
+    payload = {
+        "name": key,
+        "value": value
+    }
+    headers = {
+        "X-API-KEY": os.getenv('API_KEY')
+    }
+    response = requests.post(f"{API_URL}/secrets", json=payload, headers=headers)
+
+    if response.status_code == 200:
+        click.echo(f"Secret '{key}' created successfully.")
+    else:
+        click.echo(f"Failed to create secret. Error: {response.text}")
 
 @click.command()
-@click.argument('name')
+@click.argument('key')
 @click.argument('value')
-def update(name, value):
+def update(key, value):
     """Update an existing secret"""
-    try:
-        updated_secret = secret_manager.update_secret(name, value)
-        click.echo(f"Secret '{name}' updated to version: {updated_secret.active_version}")
-    except Exception as e:
-        click.echo(f"Error: {str(e)}")
+    payload = {
+        "value": value
+    }
+    headers = {
+        "X-API-KEY": os.getenv('API_KEY')
+    }
+    response = requests.put(f"{API_URL}/secrets/{key}", json=payload, headers=headers)
+
+    if response.status_code == 200:
+        click.echo(f"Secret '{key}' updated successfully.")
+    else:
+        click.echo(f"Failed to update secret. Error: {response.text}")
 
 @click.command()
-@click.argument('name')
+@click.argument('key')
 @click.option('--version', default=None, help='Specify the version of the secret to retrieve.')
-def read(name, version):
-    """Read a secret by name (optionally by version)"""
-    try:
-        secret = secret_manager.get_secret(name, version)
-        click.echo(f"Secret '{name}' (version {secret.version}): {secret.value}")
-    except Exception as e:
-        click.echo(f"Error: {str(e)}")
+def read(key, version):
+    """Retrieve a secret by name."""
+    headers = {
+        "X-API-KEY": os.getenv('API_KEY')
+    }
+    response = requests.get(f"{API_URL}/secrets/{key}", headers=headers)
+    if version:
+        response = requests.get(f"{API_URL}/secrets/{key}?version={version}", headers=headers)
+
+    if response.status_code == 200:
+        secret = response.json()
+        click.echo(f"Secret: {json.dumps(secret, indent=2)}")
+    else:
+        click.echo(f"Failed to retrieve secret. Error: {response.text}")
 
 @click.command()
-@click.argument('name')
-def delete(name):
-    """Delete a secret and its versions"""
-    try:
-        secret_manager.delete_secret(name)
-        click.echo(f"Secret '{name}' deleted successfully.")
-    except Exception as e:
-        click.echo(f"Error: {str(e)}")
+@click.argument('key')
+def delete(key):
+    """Delete a secret by name."""
+    headers = {
+        "X-API-KEY": os.getenv('API_KEY')
+    }
+    response = requests.delete(f"{API_URL}/secrets/{key}", headers=headers)
+    
+    if response.status_code == 204:
+        click.echo(f"Secret '{key}' deleted successfully.")
+    else:
+        click.echo(f"Failed to delete secret. Error: {response.text}")
 
 # Add commands to the CLI group
 cli.add_command(create)

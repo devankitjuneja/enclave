@@ -21,4 +21,7 @@ class SecretVersion(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
-    secret = relationship("Secret", back_populates="secret_versions")
+    secret = relationship("Secret", foreign_keys=[secret_id])
+
+    def __repr__(self):
+        return f"<SecretVersion(id='{self.id}')>"

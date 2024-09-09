@@ -33,3 +33,10 @@ def with_db_session(func):
         with db_session() as session:
             return func(*args, db_session=session, **kwargs)
     return wrapper
+
+def get_db():
+    db = Session()
+    try:
+        yield db
+    finally:
+        db.close()

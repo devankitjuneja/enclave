@@ -1,8 +1,13 @@
+from typing import List
 from fastapi import (
     APIRouter, HTTPException,
-    Query
+    Query, Depends
 )
+from sqlalchemy.orm import joinedload
+from enclave.shared.models.secret import Secret
+from enclave.shared.models.secret_version import SecretVersion
 from enclave.core.enclave_secret_manager import EnclaveSecretManager
+from enclave.shared.database import get_db
 from pydantic import BaseModel
 
 router = APIRouter(
@@ -29,6 +34,58 @@ class SecretResponse(BaseModel):
     version: int
     secret_value: str
     value: str
+
+class SecretVersionResponse(BaseModel):
+    id: str
+    version: int
+    encrypted_value: str
+    algorithm: str
+
+    class Config:
+        orm_mode = True
+
+class SecretListResponse(BaseModel):
+    id: str
+    name: str
+    active_version: int
+    created_at: str
+    updated_at: str
+    secret_versions: List[SecretVersionResponse]
+
+    class Config:
+        orm_mode = True
+
+@router.get("/list", response_model=List[SecretListResponse])
+async def list_secrets(
+    db=Depends(get_db)
+) -> List[SecretListResponse]:
+    try:
+        secrets = db.query(Secret).options(
+            joinedload(Secret.secret_versions)
+        ).all()
+
+        # Map secrets and versions to SecretResponse and SecretVersionResponse models
+        secret_responses = [
+            SecretListResponse(
+                id=secret.id,
+                name=secret.name,
+                active_version=secret.active_version,
+                created_at=str(secret.created_at),
+                updated_at=str(secret.updated_at),
+                secret_versions=[
+                    SecretVersionResponse(
+                        id=version.id,
+                        version=version.version,
+                        encrypted_value=version.encrypted_value,
+                        algorithm=version.algorithm
+                    ) for version in secret.secret_versions
+                ]
+            ) for secret in secrets
+        ]
+
+        return secret_responses
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 # Create a new secret
