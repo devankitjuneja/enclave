@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  api:
+    container_name: enclave-api
+    build: .
+    ports:
+      - "8005:8005"
+    env_file:
+      - .env
+    healthcheck:
+      test: "exit 0"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+     - enclave-network
+
+  db:
+    container_name: enclave-db
+    image: postgres:latest
+    volumes:
+      - ../enclave-postgres-data/db-data:/var/lib/postgresql/data
+      - ../enclave-postgres-data/db-scripts:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    networks:
+     - enclave-network
+    healthcheck:
+      test: "exit 0"
+
+networks:
+  enclave-network:
+    name: enclave-network
+    driver: bridge
