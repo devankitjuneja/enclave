@@ -124,7 +124,7 @@ You can also interact with the Secret Manager using its CLI:
 
 - **Retrieve a Secret**:
    ```bash
-   enclave-cli read --name db-password
+   enclave-cli read --name db-password --version 1
    ```
 
 - **Update a Secret**:

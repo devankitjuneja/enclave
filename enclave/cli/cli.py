@@ -11,12 +11,12 @@ def cli():
     pass
 
 @click.command()
-@click.argument('key')
-@click.argument('value')
-def create(key, value):
+@click.option('--name', required=True, help='The name of the secret')
+@click.option('--value', required=True, help='The value of the secret')
+def create(name, value):
     """Create a new secret."""
     payload = {
-        "name": key,
+        "name": name,
         "value": value
     }
     headers = {
@@ -25,39 +25,40 @@ def create(key, value):
     response = requests.post(f"{API_URL}/secrets", json=payload, headers=headers)
 
     if response.status_code == 200:
-        click.echo(f"Secret '{key}' created successfully.")
+        click.echo(f"Secret '{name}' created successfully.")
     else:
         click.echo(f"Failed to create secret. Error: {response.text}")
 
 @click.command()
-@click.argument('key')
-@click.argument('value')
-def update(key, value):
-    """Update an existing secret"""
+@click.option('--name', required=True, help='The name of the secret to update')
+@click.option('--value', required=True, help='The new value of the secret')
+def update(name, value):
+    """Update an existing secret."""
     payload = {
         "value": value
     }
     headers = {
         "X-API-KEY": os.getenv('API_KEY')
     }
-    response = requests.put(f"{API_URL}/secrets/{key}", json=payload, headers=headers)
+    response = requests.put(f"{API_URL}/secrets/{name}", json=payload, headers=headers)
 
     if response.status_code == 200:
-        click.echo(f"Secret '{key}' updated successfully.")
+        click.echo(f"Secret '{name}' updated successfully.")
     else:
         click.echo(f"Failed to update secret. Error: {response.text}")
 
 @click.command()
-@click.argument('key')
+@click.option('--name', required=True, help='The name of the secret to read')
 @click.option('--version', default=None, help='Specify the version of the secret to retrieve.')
-def read(key, version):
+def read(name, version):
     """Retrieve a secret by name."""
     headers = {
         "X-API-KEY": os.getenv('API_KEY')
     }
-    response = requests.get(f"{API_URL}/secrets/{key}", headers=headers)
+    url = f"{API_URL}/secrets/{name}"
     if version:
-        response = requests.get(f"{API_URL}/secrets/{key}?version={version}", headers=headers)
+        url += f"?version={version}"
+    response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
         secret = response.json()
@@ -66,16 +67,16 @@ def read(key, version):
         click.echo(f"Failed to retrieve secret. Error: {response.text}")
 
 @click.command()
-@click.argument('key')
-def delete(key):
+@click.option('--name', required=True, help='The name of the secret to delete')
+def delete(name):
     """Delete a secret by name."""
     headers = {
         "X-API-KEY": os.getenv('API_KEY')
     }
-    response = requests.delete(f"{API_URL}/secrets/{key}", headers=headers)
+    response = requests.delete(f"{API_URL}/secrets/{name}", headers=headers)
     
     if response.status_code == 204:
-        click.echo(f"Secret '{key}' deleted successfully.")
+        click.echo(f"Secret '{name}' deleted successfully.")
     else:
         click.echo(f"Failed to delete secret. Error: {response.text}")
 
