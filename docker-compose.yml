@@ -20,8 +20,8 @@ services:
     container_name: enclave-db
     image: postgres:latest
     volumes:
-      - ../enclave-postgres-data/db-data:/var/lib/postgresql/data
-      - ../enclave-postgres-data/db-scripts:/docker-entrypoint-initdb.d
+      - pg_data:/var/lib/postgresql/data
+      - ./db-scripts:/docker-entrypoint-initdb.d
     env_file:
       - .env
     ports:
@@ -30,6 +30,10 @@ services:
      - enclave-network
     healthcheck:
       test: "exit 0"
+
+volumes:
+  pg_data:
+    driver: local
 
 networks:
   enclave-network:
