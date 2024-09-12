@@ -60,7 +60,7 @@ Ensure you have the following installed:
 
 6. Open your browser and navigate to `http://localhost:8000/docs` to explore the API.
 
-### Running with Docker Compose
+### Running with Docker Compose (Recommended)
 
 1. Ensure Docker and Docker Compose are installed on your machine.
 2. Set up your environment variables by creating a `.env` file:
