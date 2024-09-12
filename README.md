@@ -63,8 +63,22 @@ Ensure you have the following installed:
 ### Running with Docker Compose
 
 1. Ensure Docker and Docker Compose are installed on your machine.
-2. Navigate to the project directory where the `docker-compose.yml` file is located.
-3. Run the following command to start the services:
+2. Set up your environment variables by creating a `.env` file:
+   ```bash
+   touch .env
+   ```
+
+   Populate the `.env` file with the following environment variables:
+   ```env
+   API_URL=http://enclave-api:8000
+   API_KEY=<your-api-key>
+   POSTGRES_DB=enclave
+   POSTGRES_USER=enclave
+   POSTGRES_PASSWORD=enclave
+   POSTGRES_HOST=enclave-db
+   ```
+3. Navigate to the project directory where the `docker-compose.yml` file is located.
+4. Run the following command to start the services:
    ```bash
    docker compose up --build
    ```
@@ -73,9 +87,9 @@ Ensure you have the following installed:
    - Set up the PostgreSQL database
    - Seed the database with initial data from the `db-scripts` folder
 
-4. Once the services are up, you can access the API at `http://localhost:8000` and PostgreSQL on `localhost:5432`.
+5. Once the services are up, you can access the API at `http://localhost:8000` and PostgreSQL on `localhost:5432`.
 
-5. To stop the services, run:
+6. To stop the services, run:
    ```bash
    docker compose down
    ```
