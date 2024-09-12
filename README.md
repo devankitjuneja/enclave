@@ -66,18 +66,18 @@ Ensure you have the following installed:
 2. Navigate to the project directory where the `docker-compose.yml` file is located.
 3. Run the following command to start the services:
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
    This command will:
    - Build the API image
    - Set up the PostgreSQL database
    - Seed the database with initial data from the `db-scripts` folder
 
-4. Once the services are up, you can access the API at `http://localhost:8005` and PostgreSQL on `localhost:5432`.
+4. Once the services are up, you can access the API at `http://localhost:8000` and PostgreSQL on `localhost:5432`.
 
 5. To stop the services, run:
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 ## Usage
