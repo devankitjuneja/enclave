@@ -148,3 +148,11 @@ class EnclaveSecretManager:
         db_session.commit()
 
         return f"Secret '{name}' deleted successfully."
+
+    @with_db_session
+    def get_active_version(self, secret_id: str, db_session=None):
+        secret = db_session.query(Secret).filter_by(name=secret_id).first()
+        if not secret:
+            raise ValueError(f"Secret with name '{secret_id}' does not exist.")
+
+        return secret.active_version

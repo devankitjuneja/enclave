@@ -1,13 +1,16 @@
+import json
 from typing import List
 from fastapi import (
     APIRouter, HTTPException,
     Query, Depends
 )
+from loguru import logger
 from sqlalchemy.orm import joinedload
 from enclave.shared.models.secret import Secret
 from enclave.shared.models.secret_version import SecretVersion
 from enclave.core.enclave_secret_manager import EnclaveSecretManager
 from enclave.shared.database import get_db
+from enclave.shared.redis_client import redis_client
 from pydantic import BaseModel
 
 router = APIRouter(
@@ -126,14 +129,32 @@ async def get_secret(
     secret_id: str,
     version: int = Query(None, description="The version of the secret to fetch")
 ):
+    # If version is not provided, fetch the active version
+    if version is None:
+        version = secret_manager.get_active_version(secret_id=secret_id)
+
+    redis_key = f"secret:{secret_id}:version:{version}"
+
+    cached_secret = redis_client.get(redis_key)
+
+    if cached_secret:
+        logger.info(f"Cache hit for secret {secret_id} version {version}")
+        return SecretResponse(**json.loads(cached_secret))
+        # return json.loads(cached_secret)
+
+    # Otherwise, fetch the secret and cache it
     try:
         secret = secret_manager.get_secret(name=secret_id, version=version)
-        return SecretResponse(
+        secret_response = SecretResponse(
             id=secret.id, name=secret.name,
             version=secret.version,
             secret_value=secret.secret_value,
             value=secret.value
         )
+
+        redis_client.setex(redis_key, 600, secret_response.model_dump_json())
+
+        return secret_response
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

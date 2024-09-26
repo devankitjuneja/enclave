@@ -31,6 +31,14 @@ services:
     healthcheck:
       test: "exit 0"
 
+  redis:
+    container_name: enclave-redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    networks:
+      - enclave-network
+
 volumes:
   pg_data:
     driver: local

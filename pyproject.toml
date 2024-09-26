@@ -18,6 +18,7 @@ click = "^8.1.7"
 fastapi = "^0.114.0"
 uvicorn = "^0.30.6"
 requests = "^2.32.3"
+redis = "^5.0.8"
 
 [tool.poetry.scripts]
 enclave-cli = "enclave.cli.cli:cli"
