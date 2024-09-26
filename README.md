@@ -51,6 +51,7 @@ Ensure you have the following installed:
    POSTGRES_USER=enclave
    POSTGRES_PASSWORD=enclave
    POSTGRES_HOST=localhost
+   REDIS_HOST=localhost
    ```
 
 5. Run the application locally:
@@ -76,6 +77,7 @@ Ensure you have the following installed:
    POSTGRES_USER=enclave
    POSTGRES_PASSWORD=enclave
    POSTGRES_HOST=enclave-db
+   REDIS_HOST=enclave-redis
    ```
 3. Navigate to the project directory where the `docker-compose.yml` file is located.
 4. Run the following command to start the services:
